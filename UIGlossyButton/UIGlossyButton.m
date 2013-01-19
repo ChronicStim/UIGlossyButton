@@ -457,6 +457,36 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 	[self setNeedsDisplay];
 }
 
++(UIGlossyButton *)cptDefaultNavBarGlossyButtonWithTitle:(NSString *)title withHighlight:(BOOL)highlight;
+{
+    UIFont *font = [UIFont fontWithName:@"Arial-BoldMT" size:12.0f];
+    CGSize labelSize = [title sizeWithFont:font];
+    labelSize.width += 14.0f;
+    
+    UIGlossyButton *newButton = [[UIGlossyButton alloc] initWithFrame:CGRectMake(0, 8, roundf(labelSize.width), 28)];
+    if (highlight) {
+        newButton.tintColor = [UIColor cptPrimaryColorSelected];
+        newButton.borderColor = [UIColor cptPrimaryColorSelected];
+    } else {
+        newButton.tintColor = [UIColor cptPrimaryColor];
+        newButton.borderColor = [UIColor cptPrimaryColor];
+    }
+    newButton.tag = 0;
+	[newButton useWhiteLabel: YES];
+	newButton.backgroundOpacity = 1.0;
+	newButton.innerBorderWidth = 0.0f;
+	newButton.buttonBorderWidth = 2.0f;
+	newButton.buttonCornerRadius = 6.0f;
+	newButton.strokeType = kUIGlossyButtonStrokeTypeGradientFrame;
+	[newButton setGradientType: kUIGlossyButtonGradientTypeSolid];
+	[newButton setExtraShadingType:kUIGlossyButtonExtraShadingTypeRounded];
+    [newButton.titleLabel setAdjustsFontSizeToFitWidth:YES];
+    [newButton.titleLabel setMinimumScaleFactor:0.1];
+    [newButton.titleLabel setFont:font];
+    [newButton setTitle:title forState:UIControlStateNormal];
+    return newButton;
+}
+
 @end
 
 

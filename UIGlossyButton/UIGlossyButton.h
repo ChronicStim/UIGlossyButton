@@ -99,6 +99,8 @@ typedef enum _UIGlossyButtonExtraShadingType {
 - (void) setActionSheetButtonWithColor : (UIColor*) color;
 - (void) setNavigationButtonWithColor : (UIColor*) color;	// navigation bar button, or store button
 
++(UIGlossyButton *)cptDefaultNavBarGlossyButtonWithTitle:(NSString *)title withHighlight:(BOOL)highlight;
+
 @end
 
 
