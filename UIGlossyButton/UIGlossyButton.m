@@ -477,8 +477,8 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 	newButton.innerBorderWidth = 0.0f;
 	newButton.buttonBorderWidth = 2.0f;
 	newButton.buttonCornerRadius = 6.0f;
-	newButton.strokeType = kUIGlossyButtonStrokeTypeGradientFrame;
-	[newButton setGradientType: kUIGlossyButtonGradientTypeSolid];
+	newButton.strokeType = kUIGlossyButtonStrokeTypeBevelUp;
+	[newButton setGradientType: kUIGlossyButtonGradientTypeLinearGlossyStandard];
 	[newButton setExtraShadingType:kUIGlossyButtonExtraShadingTypeRounded];
     [newButton.titleLabel setAdjustsFontSizeToFitWidth:YES];
     [newButton.titleLabel setMinimumScaleFactor:0.1];
