@@ -487,10 +487,49 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     return newButton;
 }
 
++(UIGlossyButton *)cptDefaultGlossyButtonForFrame:(CGRect)aFrame withTitle:(NSString *)title tintColor:(UIColor *)aTintColor borderColor:(UIColor *)aBorderColor disabledColor:(UIColor *)aDisabledColor disabledBorderColor:(UIColor *)aDisabledBorderColor;
+{
+    UIFont *font = [UIFont fontWithName:@"Arial-BoldMT" size:15.0f];
+    UIGlossyButton *newButton = [[UIGlossyButton alloc] initWithFrame:aFrame];
+    
+    newButton.titleLabel.font = font;
+    newButton.tintColor = aTintColor;
+	[newButton useWhiteLabel: YES];
+	newButton.backgroundOpacity = 1.0;
+	newButton.innerBorderWidth = 0.0f;
+	newButton.buttonBorderWidth = 3.0f;
+	newButton.buttonCornerRadius = 8.0f;
+    newButton.borderColor = aBorderColor;
+    newButton.disabledColor = aDisabledColor;
+    newButton.disabledBorderColor = aDisabledBorderColor;
+	newButton.strokeType = kUIGlossyButtonStrokeTypeGradientFrame;
+	[newButton setGradientType: kUIGlossyButtonGradientTypeSolid];
+	[newButton setExtraShadingType:kUIGlossyButtonExtraShadingTypeRounded];
+
+    return newButton;
+}
+
+-(void)applyCPTDefaultGlossyButtonFeaturesWithTitle:(NSString *)title tintColor:(UIColor *)aTintColor borderColor:(UIColor *)aBorderColor disabledColor:(UIColor *)aDisabledColor disabledBorderColor:(UIColor *)aDisabledBorderColor;
+{
+    UIFont *font = [UIFont fontWithName:@"Arial-BoldMT" size:15.0f];
+    
+    self.titleLabel.font = font;
+    self.tintColor = aTintColor;
+    self.titleLabel.text = title;
+	[self useWhiteLabel: YES];
+	self.backgroundOpacity = 1.0;
+	self.innerBorderWidth = 0.0f;
+	self.buttonBorderWidth = 3.0f;
+	self.buttonCornerRadius = 8.0f;
+    self.borderColor = aBorderColor;
+    self.disabledColor = aDisabledColor;
+    self.disabledBorderColor = aDisabledBorderColor;
+	self.strokeType = kUIGlossyButtonStrokeTypeGradientFrame;
+	[self setGradientType: kUIGlossyButtonGradientTypeSolid];
+	[self setExtraShadingType:kUIGlossyButtonExtraShadingTypeRounded];
+}
+
 @end
-
-
-
 
 
 @implementation UIGNavigationButton
