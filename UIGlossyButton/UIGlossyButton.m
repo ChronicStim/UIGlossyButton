@@ -459,7 +459,13 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 
 +(UIGlossyButton *)cptDefaultNavBarGlossyButtonWithTitle:(NSString *)title withHighlight:(BOOL)highlight;
 {
-    UIFont *font = [UIFont fontWithName:@"Arial-BoldMT" size:12.0f];
+    CGFloat fontSize;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        fontSize = 15.0f;
+    } else {
+        fontSize = 12.0f;
+    }
+    UIFont *font = [UIFont fontWithName:@"Arial-BoldMT" size:fontSize];
     CGSize labelSize = [title sizeWithFont:font];
     labelSize.width += 14.0f;
     
@@ -487,28 +493,6 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     return newButton;
 }
 
-+(UIGlossyButton *)cptDefaultGlossyButtonForFrame:(CGRect)aFrame withTitle:(NSString *)title tintColor:(UIColor *)aTintColor borderColor:(UIColor *)aBorderColor disabledColor:(UIColor *)aDisabledColor disabledBorderColor:(UIColor *)aDisabledBorderColor;
-{
-    UIFont *font = [UIFont fontWithName:@"Arial-BoldMT" size:15.0f];
-    UIGlossyButton *newButton = [[UIGlossyButton alloc] initWithFrame:aFrame];
-    
-    newButton.titleLabel.font = font;
-    newButton.tintColor = aTintColor;
-	[newButton useWhiteLabel: YES];
-	newButton.backgroundOpacity = 1.0;
-	newButton.innerBorderWidth = 0.0f;
-	newButton.buttonBorderWidth = 3.0f;
-	newButton.buttonCornerRadius = 8.0f;
-    newButton.borderColor = aBorderColor;
-    newButton.disabledColor = aDisabledColor;
-    newButton.disabledBorderColor = aDisabledBorderColor;
-	newButton.strokeType = kUIGlossyButtonStrokeTypeGradientFrame;
-	[newButton setGradientType: kUIGlossyButtonGradientTypeSolid];
-	[newButton setExtraShadingType:kUIGlossyButtonExtraShadingTypeRounded];
-
-    return newButton;
-}
-
 -(void)applyCPTDefaultGlossyButtonFeaturesWithTitle:(NSString *)title tintColor:(UIColor *)aTintColor borderColor:(UIColor *)aBorderColor disabledColor:(UIColor *)aDisabledColor disabledBorderColor:(UIColor *)aDisabledBorderColor;
 {
     UIFont *font = [UIFont fontWithName:@"Arial-BoldMT" size:15.0f];
@@ -516,6 +500,8 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     self.titleLabel.font = font;
     self.tintColor = aTintColor;
     self.titleLabel.text = title;
+    [self.titleLabel setAdjustsFontSizeToFitWidth:YES];
+    [self.titleLabel setMinimumScaleFactor:0.4];
 	[self useWhiteLabel: YES];
 	self.backgroundOpacity = 1.0;
 	self.innerBorderWidth = 0.0f;
