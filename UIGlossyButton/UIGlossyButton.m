@@ -489,6 +489,12 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     [newButton.titleLabel setAdjustsFontSizeToFitWidth:YES];
     [newButton.titleLabel setMinimumScaleFactor:0.1];
     [newButton.titleLabel setFont:font];
+    
+    if (highlight) {
+        [newButton.titleLabel setShadowColor:[UIColor blackColor]];
+        [newButton.titleLabel setShadowOffset:CGSizeMake(1.0f, 1.0f)];
+    }
+    
     [newButton setTitle:title forState:UIControlStateNormal];
     return newButton;
 }
