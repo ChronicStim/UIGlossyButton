@@ -126,3 +126,10 @@ typedef enum _UIGlossyButtonExtraShadingType {
 @property (nonatomic, assign) CGFloat innerRadiusRatio;
 
 @end
+
+@interface UIGlossyBarButtonItem : UIBarButtonItem {
+    
+}
++(UIGlossyBarButtonItem *)glossyBarButtonItemWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents;
+
+@end

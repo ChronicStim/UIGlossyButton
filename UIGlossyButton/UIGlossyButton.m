@@ -494,6 +494,8 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         [newButton.titleLabel setShadowColor:[UIColor blackColor]];
         [newButton.titleLabel setShadowOffset:CGSizeMake(1.0f, 1.0f)];
     }
+    newButton.disabledBorderColor = [UIColor grayColor];
+    newButton.disabledColor = [UIColor grayColor];
     
     [newButton setTitle:title forState:UIControlStateNormal];
     return newButton;
@@ -601,6 +603,71 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 	}
 	[path closePath];
 	return path;
+}
+
+@end
+
+@implementation UIGlossyBarButtonItem
+
++(UIGlossyBarButtonItem *)glossyBarButtonItemWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents;
+{
+    UIGlossyBarButtonItem *barButtonItem;
+    UIGlossyButton *glossyButton;
+    CGFloat finalButtonHeight = 34.0f;
+    if (nil != title) {
+        glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:title withHighlight:highlighted];
+        [glossyButton setTag:777];
+        [glossyButton addTarget:target action:selector forControlEvents:controlEvents];
+        CGRect buttonRect = [glossyButton frame];
+        CGRect finalRect = CGRectMake(0, 0, buttonRect.size.width, finalButtonHeight);
+        [glossyButton setFrame:finalRect];
+        
+        barButtonItem = [[UIGlossyBarButtonItem alloc] initWithCustomView:glossyButton];
+    } else if (nil != image) {
+        CGFloat finalImageHeight = 30.0f;
+        CGFloat extraImageWidthSpacing = 10.0f;
+        CGFloat scale = finalImageHeight / image.size.height;
+        CGRect imageViewRect = CGRectMake(0, 0, roundf(scale * image.size.width), finalImageHeight);
+        CGRect buttonRect = CGRectMake(0, 0, imageViewRect.size.width + extraImageWidthSpacing, finalButtonHeight);
+        
+        glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:@"" withHighlight:highlighted];
+        [glossyButton addTarget:target action:selector forControlEvents:controlEvents];
+        [glossyButton setTag:777];
+        [glossyButton setFrame:buttonRect];
+        
+        UIView *containerView = [[UIView alloc] initWithFrame:buttonRect];
+        [containerView setBackgroundColor:[UIColor clearColor]];
+        [containerView addSubview:glossyButton];
+        [glossyButton setCenter:containerView.center];
+        
+        UIImageView *imageView = [[UIImageView alloc] initWithFrame:imageViewRect];
+        [imageView setBackgroundColor:[UIColor clearColor]];
+        [imageView setImage:image];
+        [imageView setTag:778];
+        [containerView addSubview:imageView];
+        [imageView setCenter:containerView.center];
+        
+        barButtonItem = [[UIGlossyBarButtonItem alloc] initWithCustomView:containerView];
+    } else {
+        barButtonItem = [[UIGlossyBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:target action:selector];
+    }
+    
+    return barButtonItem;
+}
+
+-(void)setEnabled:(BOOL)enabled;
+{
+    [super setEnabled:enabled];
+    if (nil != [[self customView] viewWithTag:777]) {
+        [(UIGlossyButton *)[[self customView] viewWithTag:777] setEnabled:enabled];
+    }
+    if (nil != [[self customView] viewWithTag:778]) {
+        CGFloat alpha = 1.0f;
+        if (!enabled) {
+            alpha = 0.5f;
+        }
+        [(UIImageView *)[[self customView] viewWithTag:778] setAlpha:alpha];
+    }
 }
 
 @end
