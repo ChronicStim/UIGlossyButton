@@ -614,7 +614,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     UIGlossyBarButtonItem *barButtonItem;
     UIGlossyButton *glossyButton;
     CGFloat finalButtonHeight = 34.0f;
-    if (nil != title) {
+    if (nil != title && nil == image) {
         glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:title withHighlight:highlighted];
         [glossyButton setTag:777];
         [glossyButton addTarget:target action:selector forControlEvents:controlEvents];
@@ -623,7 +623,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         [glossyButton setFrame:finalRect];
         
         barButtonItem = [[UIGlossyBarButtonItem alloc] initWithCustomView:glossyButton];
-    } else if (nil != image) {
+    } else if (nil != image && nil == title) {
         CGFloat finalImageHeight = 30.0f;
         CGFloat extraImageWidthSpacing = 10.0f;
         CGFloat scale = finalImageHeight / image.size.height;
@@ -648,7 +648,56 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         [imageView setCenter:containerView.center];
         
         barButtonItem = [[UIGlossyBarButtonItem alloc] initWithCustomView:containerView];
+    } else if (nil != image && nil != title) {
+        // Button with image to left of text
+        
+        // Create the initial button with just the text
+        glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:title withHighlight:highlighted];
+        [glossyButton setTag:777];
+        UILabel *titleLabel = [[UILabel alloc] initWithFrame:glossyButton.titleLabel.frame];
+        [titleLabel setText:glossyButton.titleLabel.text];
+        [titleLabel setTextAlignment:glossyButton.titleLabel.textAlignment];
+        [titleLabel setTextColor:glossyButton.titleLabel.textColor];
+        [titleLabel setBackgroundColor:[UIColor clearColor]];
+        [titleLabel setFont:glossyButton.titleLabel.font];
+        
+        // Determine rect required for the image
+        CGFloat finalImageHeight = 30.0f;
+        CGFloat extraImageWidthSpacing = 10.0f;
+        CGFloat scale = finalImageHeight / image.size.height;
+        CGRect imageViewRect = CGRectMake(0, roundf((finalButtonHeight - finalImageHeight)/2), roundf(scale * image.size.width), finalImageHeight);
+
+        UIImageView *imageView = [[UIImageView alloc] initWithFrame:imageViewRect];
+        [imageView setBackgroundColor:[UIColor clearColor]];
+        [imageView setImage:image];
+        [imageView setTag:778];
+
+        CGRect titleLabelRect = CGRectMake(imageViewRect.size.width+(extraImageWidthSpacing/2.0f), roundf((finalButtonHeight-titleLabel.bounds.size.height)/2), roundf(titleLabel.bounds.size.width+(extraImageWidthSpacing/2.0f)), titleLabel.bounds.size.height);
+        titleLabel.frame = titleLabelRect;
+        
+        CGRect combinedRect = CGRectUnion(imageViewRect, titleLabelRect);
+        UIView *combinedView = [[UIView alloc] initWithFrame:combinedRect];
+        [combinedView setBackgroundColor:[UIColor clearColor]];
+        [combinedView addSubview:imageView];
+        [combinedView addSubview:titleLabel];
+        [combinedView setUserInteractionEnabled:NO];
+        [combinedView setExclusiveTouch:NO];
+        
+        CGRect buttonRect = CGRectMake(0, 0, (combinedRect.size.width + extraImageWidthSpacing), finalButtonHeight);
+        [glossyButton setTitle:@"" forState:UIControlStateNormal];
+        [glossyButton setFrame:buttonRect];
+        [glossyButton addTarget:target action:selector forControlEvents:controlEvents];
+
+        UIView *containerView = [[UIView alloc] initWithFrame:buttonRect];
+        [containerView setBackgroundColor:[UIColor clearColor]];
+        [containerView addSubview:glossyButton];
+        [containerView addSubview:combinedView];
+        [combinedView setCenter:containerView.center];
+        
+        barButtonItem = [[UIGlossyBarButtonItem alloc] initWithCustomView:containerView];
+
     } else {
+        // Ooops. Should have caught in prior statements, but if you go here, return a blank button so something can be shown
         barButtonItem = [[UIGlossyBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:target action:selector];
     }
     
