@@ -8,6 +8,7 @@
 
 
 #import "UIGlossyButton.h"
+#import <AVFoundation/AVFoundation.h>
 
 static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     if ([[UIView class] instancesRespondToSelector:@selector(contentScaleFactor)]) {
@@ -61,6 +62,8 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 
 @interface UIGlossyButton()
 
+@property (nonatomic, strong) AVAudioPlayer *audioPlayer;
+
 // main draw routine, not including stroke the outer path
 - (void) drawTintColorButton : (CGContextRef)context tintColor : (UIColor *) tintColor isSelected : (BOOL) isSelected;
 - (void) strokeButton : (CGContextRef)context color : (UIColor *)color isSelected : (BOOL) isSelected;
@@ -78,7 +81,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 @synthesize backgroundOpacity = _backgroundOpacity;
 @synthesize buttonInsets = _buttonInsets;
 @synthesize invertGraidentOnSelected = _invertGraidentOnSelected;
-
+@synthesize playSoundWhenPressed = _playSoundWhenPressed;
 
 #pragma lifecycle
 
@@ -89,6 +92,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 	_buttonBorderWidth = 1.0;
 	_backgroundOpacity = 1.0;
     _buttonInsets = UIEdgeInsetsZero;
+    _playSoundWhenPressed = NO;
 	[self setGradientType: kUIGlossyButtonGradientTypeLinearSmoothStandard];
     [self addObserver:self forKeyPath:@"highlighted" options:0 context:nil];
     [self addObserver:self forKeyPath:@"enabled" options:0 context:nil];
@@ -122,6 +126,37 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 }
 
 #pragma mark - 
+
+-(BOOL)playSoundWhenPressed;
+{
+    return _playSoundWhenPressed;
+}
+
+-(void)setPlaySoundWhenPressed:(BOOL)playSound;
+{
+    if (playSound != _playSoundWhenPressed) {
+        _playSoundWhenPressed = playSound;
+    }
+    
+    if (_playSoundWhenPressed) {
+        
+        NSURL *soundURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"tap-warm" ofType:@"aif"]];
+        NSError *error = nil;
+        self.audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:soundURL error:&error];
+        [self.audioPlayer prepareToPlay];
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
+        [self addTarget:self action:@selector(playTapSound:) forControlEvents:UIControlEventTouchDown];
+        
+    } else {
+        [self removeTarget:self action:@selector(playTapSound:) forControlEvents:UIControlEventTouchDown];
+        self.audioPlayer = nil;
+    }
+}
+
+-(void)playTapSound:(id)sender;
+{
+    [self.audioPlayer play];
+}
 
 /* graident that will be used to fill on top of the button for 3D effect */
 - (void) setGradientType : (UIGlossyButtonGradientType) type {
@@ -498,6 +533,9 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     newButton.disabledColor = [UIColor grayColor];
     
     [newButton setTitle:title forState:UIControlStateNormal];
+    
+    [newButton setPlaySoundWhenPressed:YES];
+
     return newButton;
 }
 
@@ -608,7 +646,8 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:@"" withHighlight:highlighted];
         [glossyButton setTag:777];
     }
-    
+    [glossyButton setPlaySoundWhenPressed:YES];
+
     return glossyButton;
 }
 
@@ -710,100 +749,6 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     [glossyButton setCenter:containerView.center];
 
     return [[UIGlossyBarButtonItem alloc] initWithCustomView:containerView];
-
-    /*
-    UIGlossyBarButtonItem *barButtonItem;
-    UIGlossyButton *glossyButton;
-    CGFloat finalButtonHeight = 34.0f;
-    if (nil != title && nil == image) {
-        glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:title withHighlight:highlighted];
-        [glossyButton setTag:777];
-        [glossyButton addTarget:target action:selector forControlEvents:controlEvents];
-        CGRect buttonRect = [glossyButton frame];
-        CGRect finalRect = CGRectMake(0, 0, buttonRect.size.width, finalButtonHeight);
-        [glossyButton setFrame:finalRect];
-        
-        barButtonItem = [[UIGlossyBarButtonItem alloc] initWithCustomView:glossyButton];
-    } else if (nil != image && nil == title) {
-        CGFloat finalImageHeight = 30.0f;
-        CGFloat extraImageWidthSpacing = 10.0f;
-        CGFloat scale = finalImageHeight / image.size.height;
-        CGRect imageViewRect = CGRectMake(0, 0, roundf(scale * image.size.width), finalImageHeight);
-        CGRect buttonRect = CGRectMake(0, 0, imageViewRect.size.width + extraImageWidthSpacing, finalButtonHeight);
-        
-        glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:@"" withHighlight:highlighted];
-        [glossyButton addTarget:target action:selector forControlEvents:controlEvents];
-        [glossyButton setTag:777];
-        [glossyButton setFrame:buttonRect];
-        
-        UIView *containerView = [[UIView alloc] initWithFrame:buttonRect];
-        [containerView setBackgroundColor:[UIColor clearColor]];
-        [containerView addSubview:glossyButton];
-        [glossyButton setCenter:containerView.center];
-        
-        UIImageView *imageView = [[UIImageView alloc] initWithFrame:imageViewRect];
-        [imageView setBackgroundColor:[UIColor clearColor]];
-        [imageView setImage:image];
-        [imageView setTag:778];
-        [containerView addSubview:imageView];
-        [imageView setCenter:containerView.center];
-        
-        barButtonItem = [[UIGlossyBarButtonItem alloc] initWithCustomView:containerView];
-    } else if (nil != image && nil != title) {
-        // Button with image to left of text
-        
-        // Create the initial button with just the text
-        glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:title withHighlight:highlighted];
-        [glossyButton setTag:777];
-        UILabel *titleLabel = [[UILabel alloc] initWithFrame:glossyButton.titleLabel.frame];
-        [titleLabel setText:glossyButton.titleLabel.text];
-        [titleLabel setTextAlignment:glossyButton.titleLabel.textAlignment];
-        [titleLabel setTextColor:glossyButton.titleLabel.textColor];
-        [titleLabel setBackgroundColor:[UIColor clearColor]];
-        [titleLabel setFont:glossyButton.titleLabel.font];
-        
-        // Determine rect required for the image
-        CGFloat finalImageHeight = 30.0f;
-        CGFloat extraImageWidthSpacing = 10.0f;
-        CGFloat scale = finalImageHeight / image.size.height;
-        CGRect imageViewRect = CGRectMake(0, roundf((finalButtonHeight - finalImageHeight)/2), roundf(scale * image.size.width), finalImageHeight);
-
-        UIImageView *imageView = [[UIImageView alloc] initWithFrame:imageViewRect];
-        [imageView setBackgroundColor:[UIColor clearColor]];
-        [imageView setImage:image];
-        [imageView setTag:778];
-
-        CGRect titleLabelRect = CGRectMake(imageViewRect.size.width+(extraImageWidthSpacing/2.0f), roundf((finalButtonHeight-titleLabel.bounds.size.height)/2), roundf(titleLabel.bounds.size.width+(extraImageWidthSpacing/2.0f)), titleLabel.bounds.size.height);
-        titleLabel.frame = titleLabelRect;
-        
-        CGRect combinedRect = CGRectUnion(imageViewRect, titleLabelRect);
-        UIView *combinedView = [[UIView alloc] initWithFrame:combinedRect];
-        [combinedView setBackgroundColor:[UIColor clearColor]];
-        [combinedView addSubview:imageView];
-        [combinedView addSubview:titleLabel];
-        [combinedView setUserInteractionEnabled:NO];
-        [combinedView setExclusiveTouch:NO];
-        
-        CGRect buttonRect = CGRectMake(0, 0, (combinedRect.size.width + extraImageWidthSpacing), finalButtonHeight);
-        [glossyButton setTitle:@"" forState:UIControlStateNormal];
-        [glossyButton setFrame:buttonRect];
-        [glossyButton addTarget:target action:selector forControlEvents:controlEvents];
-
-        UIView *containerView = [[UIView alloc] initWithFrame:buttonRect];
-        [containerView setBackgroundColor:[UIColor clearColor]];
-        [containerView addSubview:glossyButton];
-        [containerView addSubview:combinedView];
-        [combinedView setCenter:containerView.center];
-        
-        barButtonItem = [[UIGlossyBarButtonItem alloc] initWithCustomView:containerView];
-
-    } else {
-        // Ooops. Should have caught in prior statements, but if you go here, return a blank button so something can be shown
-        barButtonItem = [[UIGlossyBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:target action:selector];
-    }
-    
-    return barButtonItem;
-     */
 }
 
 -(void)setEnabled:(BOOL)enabled;

@@ -70,6 +70,7 @@ typedef enum _UIGlossyButtonExtraShadingType {
 	CGFloat _buttonBorderWidth;
     
     BOOL    _invertGraidentOnSelected;
+    BOOL    _playSoundWhenPressed;
 	
 	CGFloat _backgroundOpacity;
     
@@ -90,6 +91,7 @@ typedef enum _UIGlossyButtonExtraShadingType {
 @property (nonatomic, assign) UIGlossyButtonStrokeType strokeType;	// outer button border
 @property (nonatomic, assign) UIGlossyButtonExtraShadingType extraShadingType;	// extra shading effect other than gradient
 @property (nonatomic, assign) BOOL invertGraidentOnSelected;    // invert the gradient when button down for inner bevel effect, default = NO
+@property (nonatomic, assign) BOOL playSoundWhenPressed;    // plays a sound when the button is pressed, default = NO
 @property (nonatomic, assign) CGFloat backgroundOpacity; // default 1.0, set smaller to draw button in transparent
 
 /* path for the button, default is a round corner rectangle, we can subclass and customize it */
