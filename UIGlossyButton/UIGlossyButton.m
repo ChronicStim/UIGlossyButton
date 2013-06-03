@@ -551,9 +551,12 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         UIImageView *imageView = [[UIImageView alloc] initWithFrame:imageViewRect];
         [imageView setBackgroundColor:[UIColor clearColor]];
         [imageView setImage:image];
+        [imageView setContentScaleFactor:[[UIScreen mainScreen] scale]];
         [imageView setTag:778];
         [glossyButton addSubview:imageView];
         [imageView setCenter:glossyButton.center];
+        [imageView setContentMode:UIViewContentModeScaleAspectFit];
+        [imageView setAutoresizingMask:(UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth)];
                 
     } else if (nil != image && nil != title) {
 
@@ -577,6 +580,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         
         UIImageView *imageView = [[UIImageView alloc] initWithFrame:imageViewRect];
         [imageView setBackgroundColor:[UIColor clearColor]];
+        [imageView setContentScaleFactor:[[UIScreen mainScreen] scale]];
         [imageView setImage:image];
         [imageView setTag:778];
         
