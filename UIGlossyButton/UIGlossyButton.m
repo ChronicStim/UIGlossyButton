@@ -534,7 +534,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     
     [newButton setTitle:title forState:UIControlStateNormal];
     
-    [newButton setPlaySoundWhenPressed:YES];
+    //[newButton setPlaySoundWhenPressed:YES];
 
     return newButton;
 }
@@ -646,7 +646,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:@"" withHighlight:highlighted];
         [glossyButton setTag:777];
     }
-    [glossyButton setPlaySoundWhenPressed:YES];
+    //[glossyButton setPlaySoundWhenPressed:YES];
 
     return glossyButton;
 }
