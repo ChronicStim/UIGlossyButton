@@ -742,7 +742,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     UIGlossyButton *glossyButton = [UIGlossyButton glossyButtonWithTitle:title image:image highlighted:highlighted forTarget:target selector:selector forControlEvents:controlEvents];
     
     CGFloat finalButtonHeight = 34.0f;
-    CGRect buttonRect = CGRectMake(0, 0, (glossyButton.frame.size.width + 5.0f), finalButtonHeight);
+    CGRect buttonRect = CGRectMake(0, 0, (glossyButton.frame.size.width + 0.0f), finalButtonHeight);
     UIView *containerView = [[UIView alloc] initWithFrame:buttonRect];
     [containerView setBackgroundColor:[UIColor clearColor]];
     [containerView addSubview:glossyButton];
