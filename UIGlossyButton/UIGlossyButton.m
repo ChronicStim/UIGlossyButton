@@ -564,7 +564,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 +(UIGlossyButton *)glossyButtonWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents;
 {
     UIGlossyButton *glossyButton;
-    CGFloat finalButtonHeight = 30.0f;
+    CGFloat finalButtonHeight = 38.0f;
     if (nil != title && nil == image) {
         glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:title withHighlight:highlighted];
         [glossyButton setTag:777];
