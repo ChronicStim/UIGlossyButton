@@ -8,7 +8,7 @@
 
 
 #import "UIGlossyButton.h"
-#import <AVFoundation/AVFoundation.h>
+#import "CPTSoundEngine.h"
 
 static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     if ([[UIView class] instancesRespondToSelector:@selector(contentScaleFactor)]) {
@@ -61,8 +61,6 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 
 
 @interface UIGlossyButton()
-
-@property (nonatomic, strong) AVAudioPlayer *audioPlayer;
 
 // main draw routine, not including stroke the outer path
 - (void) drawTintColorButton : (CGContextRef)context tintColor : (UIColor *) tintColor isSelected : (BOOL) isSelected;
@@ -125,7 +123,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 #endif
 }
 
-#pragma mark - 
+#pragma mark - Sound Effects
 
 -(BOOL)playSoundWhenPressed;
 {
@@ -139,24 +137,18 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     }
     
     if (_playSoundWhenPressed) {
-        
-        NSURL *soundURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"tap-warm" ofType:@"aif"]];
-        NSError *error = nil;
-        self.audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:soundURL error:&error];
-        [self.audioPlayer prepareToPlay];
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
         [self addTarget:self action:@selector(playTapSound:) forControlEvents:UIControlEventTouchDown];
-        
     } else {
         [self removeTarget:self action:@selector(playTapSound:) forControlEvents:UIControlEventTouchDown];
-        self.audioPlayer = nil;
     }
 }
 
 -(void)playTapSound:(id)sender;
 {
-    [self.audioPlayer play];
+    [[CPTSoundEngine sharedCPTSoundEngine] playSoundForObject:self];
 }
+
+#pragma mark - 
 
 /* graident that will be used to fill on top of the button for 3D effect */
 - (void) setGradientType : (UIGlossyButtonGradientType) type {
@@ -534,7 +526,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     
     [newButton setTitle:title forState:UIControlStateNormal];
     
-    //[newButton setPlaySoundWhenPressed:YES];
+    [newButton setPlaySoundWhenPressed:YES];
 
     return newButton;
 }
@@ -646,7 +638,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:@"" withHighlight:highlighted];
         [glossyButton setTag:777];
     }
-    //[glossyButton setPlaySoundWhenPressed:YES];
+    [glossyButton setPlaySoundWhenPressed:YES];
 
     return glossyButton;
 }
