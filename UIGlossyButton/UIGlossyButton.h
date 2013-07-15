@@ -102,8 +102,10 @@ typedef enum _UIGlossyButtonExtraShadingType {
 - (void) setActionSheetButtonWithColor : (UIColor*) color;
 - (void) setNavigationButtonWithColor : (UIColor*) color;	// navigation bar button, or store button
 
++(UIGlossyButton *)cptDefaultNavBarGlossyButtonWithTitle:(NSString *)title withHighlight:(BOOL)highlight maximumButtonWidth:(CGFloat)maxWidth;
 +(UIGlossyButton *)cptDefaultNavBarGlossyButtonWithTitle:(NSString *)title withHighlight:(BOOL)highlight;
 -(void)applyCPTDefaultGlossyButtonFeaturesWithTitle:(NSString *)title tintColor:(UIColor *)aTintColor borderColor:(UIColor *)aBorderColor disabledColor:(UIColor *)aDisabledColor disabledBorderColor:(UIColor *)aDisabledBorderColor;
++(UIGlossyButton *)glossyButtonWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents maximumButtonWidth:(CGFloat)maxWidth;
 +(UIGlossyButton *)glossyButtonWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents;
 
 @end
@@ -133,6 +135,7 @@ typedef enum _UIGlossyButtonExtraShadingType {
 @interface UIGlossyBarButtonItem : UIBarButtonItem {
     
 }
++(UIGlossyBarButtonItem *)glossyBarButtonItemWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents maximumButtonWidth:(CGFloat)maxWidth;
 +(UIGlossyBarButtonItem *)glossyBarButtonItemWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents;
 
 @end

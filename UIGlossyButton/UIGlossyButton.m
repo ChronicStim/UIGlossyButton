@@ -484,15 +484,30 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 	[self setNeedsDisplay];
 }
 
-+(UIGlossyButton *)cptDefaultNavBarGlossyButtonWithTitle:(NSString *)title withHighlight:(BOOL)highlight;
++(UIGlossyButton *)cptDefaultNavBarGlossyButtonWithTitle:(NSString *)title withHighlight:(BOOL)highlight maximumButtonWidth:(CGFloat)maxWidth;
 {
+    // Define initial font size
     CGFloat fontSize;
+    UIFont *font;
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         fontSize = 15.0f;
     } else {
         fontSize = 12.0f;
     }
-    UIFont *font = [UIFont fontWithName:@"Arial-BoldMT" size:fontSize];
+    
+    // If there is a min width, iterate down to fit it
+    if (maxWidth > 0.0f) {
+        CGFloat trialWidth;
+        do {
+            font = [UIFont fontWithName:@"Arial-BoldMT" size:fontSize];
+            CGSize trialSize = [title sizeWithFont:font];
+            trialWidth = trialSize.width + 14.0f;
+            fontSize -= 1.0f;
+        } while (trialWidth > maxWidth);
+    } else {
+        font = [UIFont fontWithName:@"Arial-BoldMT" size:fontSize];
+    }
+    
     CGSize labelSize = [title sizeWithFont:font];
     labelSize.width += 14.0f;
     
@@ -527,8 +542,13 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     [newButton setTitle:title forState:UIControlStateNormal];
     
     [newButton setPlaySoundWhenPressed:YES];
-
+    
     return newButton;
+}
+
++(UIGlossyButton *)cptDefaultNavBarGlossyButtonWithTitle:(NSString *)title withHighlight:(BOOL)highlight;
+{
+    return [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:title withHighlight:highlight maximumButtonWidth:0.0f];
 }
 
 -(void)applyCPTDefaultGlossyButtonFeaturesWithTitle:(NSString *)title tintColor:(UIColor *)aTintColor borderColor:(UIColor *)aBorderColor disabledColor:(UIColor *)aDisabledColor disabledBorderColor:(UIColor *)aDisabledBorderColor;
@@ -553,12 +573,12 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 	[self setExtraShadingType:kUIGlossyButtonExtraShadingTypeRounded];
 }
 
-+(UIGlossyButton *)glossyButtonWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents;
++(UIGlossyButton *)glossyButtonWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents maximumButtonWidth:(CGFloat)maxWidth;
 {
     UIGlossyButton *glossyButton;
     CGFloat finalButtonHeight = 38.0f;
     if (nil != title && nil == image) {
-        glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:title withHighlight:highlighted];
+        glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:title withHighlight:highlighted maximumButtonWidth:maxWidth];
         [glossyButton setTag:777];
         [glossyButton addTarget:target action:selector forControlEvents:controlEvents];
         CGRect buttonRect = [glossyButton frame];
@@ -566,7 +586,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         [glossyButton setFrame:finalRect];
         
     } else if (nil != image && nil == title) {
-       
+        
         CGFloat finalImageHeight = 30.0f;
         CGFloat extraImageWidthSpacing = 10.0f;
         CGFloat scale = finalImageHeight / image.size.height;
@@ -587,20 +607,10 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         [imageView setCenter:glossyButton.center];
         [imageView setContentMode:UIViewContentModeScaleAspectFit];
         [imageView setAutoresizingMask:(UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth)];
-                
-    } else if (nil != image && nil != title) {
-
-        // Button with image to left of text
         
-        // Create the initial button with just the text
-        glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:title withHighlight:highlighted];
-        [glossyButton setTag:777];
-        UILabel *titleLabel = [[UILabel alloc] initWithFrame:glossyButton.titleLabel.frame];
-        [titleLabel setText:glossyButton.titleLabel.text];
-        [titleLabel setTextAlignment:glossyButton.titleLabel.textAlignment];
-        [titleLabel setTextColor:glossyButton.titleLabel.textColor];
-        [titleLabel setBackgroundColor:[UIColor clearColor]];
-        [titleLabel setFont:glossyButton.titleLabel.font];
+    } else if (nil != image && nil != title) {
+        
+        // Button with image to left of text
         
         // Determine rect required for the image
         CGFloat finalImageHeight = 30.0f;
@@ -613,6 +623,22 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         [imageView setContentScaleFactor:[[UIScreen mainScreen] scale]];
         [imageView setImage:image];
         [imageView setTag:778];
+        
+        if (maxWidth > 0.0f) {
+            CGFloat widthRemainingForTitle = MAX(0.0f,(maxWidth - imageViewRect.size.width));
+            glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:title withHighlight:highlighted maximumButtonWidth:widthRemainingForTitle];
+        } else {
+            glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:title withHighlight:highlighted];
+        }
+        
+        // Create the initial button with just the text
+        [glossyButton setTag:777];
+        UILabel *titleLabel = [[UILabel alloc] initWithFrame:glossyButton.titleLabel.frame];
+        [titleLabel setText:glossyButton.titleLabel.text];
+        [titleLabel setTextAlignment:glossyButton.titleLabel.textAlignment];
+        [titleLabel setTextColor:glossyButton.titleLabel.textColor];
+        [titleLabel setBackgroundColor:[UIColor clearColor]];
+        [titleLabel setFont:glossyButton.titleLabel.font];
         
         CGRect titleLabelRect = CGRectMake(imageViewRect.size.width+(extraImageWidthSpacing/2.0f), roundf((finalButtonHeight-titleLabel.bounds.size.height)/2), roundf(titleLabel.bounds.size.width+(extraImageWidthSpacing/2.0f)), titleLabel.bounds.size.height);
         titleLabel.frame = titleLabelRect;
@@ -632,15 +658,20 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         
         [glossyButton addSubview:imageView];
         [glossyButton addSubview:titleLabel];
-                
+        
     } else {
         // Ooops. Should have caught in prior statements, but if you go here, return a blank button so something can be shown
-        glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:@"" withHighlight:highlighted];
+        glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:@"" withHighlight:highlighted maximumButtonWidth:maxWidth];
         [glossyButton setTag:777];
     }
     [glossyButton setPlaySoundWhenPressed:YES];
-
+    
     return glossyButton;
+}
+
++(UIGlossyButton *)glossyButtonWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents;
+{
+    return [UIGlossyButton glossyButtonWithTitle:title image:image highlighted:highlighted forTarget:target selector:selector forControlEvents:controlEvents maximumButtonWidth:0.0f];
 }
 
 @end
@@ -729,9 +760,9 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 
 @implementation UIGlossyBarButtonItem
 
-+(UIGlossyBarButtonItem *)glossyBarButtonItemWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents;
++(UIGlossyBarButtonItem *)glossyBarButtonItemWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents maximumButtonWidth:(CGFloat)maxWidth;
 {
-    UIGlossyButton *glossyButton = [UIGlossyButton glossyButtonWithTitle:title image:image highlighted:highlighted forTarget:target selector:selector forControlEvents:controlEvents];
+    UIGlossyButton *glossyButton = [UIGlossyButton glossyButtonWithTitle:title image:image highlighted:highlighted forTarget:target selector:selector forControlEvents:controlEvents maximumButtonWidth:maxWidth];
     
     CGFloat finalButtonHeight = 34.0f;
     CGRect buttonRect = CGRectMake(0, 0, (glossyButton.frame.size.width + 0.0f), finalButtonHeight);
@@ -739,8 +770,13 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     [containerView setBackgroundColor:[UIColor clearColor]];
     [containerView addSubview:glossyButton];
     [glossyButton setCenter:containerView.center];
-
+    
     return [[UIGlossyBarButtonItem alloc] initWithCustomView:containerView];
+}
+
++(UIGlossyBarButtonItem *)glossyBarButtonItemWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents;
+{
+    return [UIGlossyBarButtonItem glossyBarButtonItemWithTitle:title image:image highlighted:highlighted forTarget:target selector:selector forControlEvents:controlEvents maximumButtonWidth:0.0f];
 }
 
 -(void)setEnabled:(BOOL)enabled;
