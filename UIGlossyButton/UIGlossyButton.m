@@ -666,6 +666,8 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     }
     [glossyButton setPlaySoundWhenPressed:YES];
     
+    DDLogVerbose(@"GlossyButton %@ has frame %@",glossyButton,NSStringFromCGRect(glossyButton.frame));
+    
     return glossyButton;
 }
 
@@ -771,12 +773,15 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     [containerView addSubview:glossyButton];
     [glossyButton setCenter:containerView.center];
     
+    DDLogVerbose(@"GlossyButton container view frame = %@",NSStringFromCGRect(containerView.frame));
     return [[UIGlossyBarButtonItem alloc] initWithCustomView:containerView];
 }
 
 +(UIGlossyBarButtonItem *)glossyBarButtonItemWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents;
 {
-    return [UIGlossyBarButtonItem glossyBarButtonItemWithTitle:title image:image highlighted:highlighted forTarget:target selector:selector forControlEvents:controlEvents maximumButtonWidth:0.0f];
+    UIGlossyBarButtonItem *barButtonItem = [UIGlossyBarButtonItem glossyBarButtonItemWithTitle:title image:image highlighted:highlighted forTarget:target selector:selector forControlEvents:controlEvents maximumButtonWidth:0.0f];
+    DDLogVerbose(@"BarButtonItem = %@ ; CustomView = %@",barButtonItem,barButtonItem.customView);
+    return barButtonItem;
 }
 
 -(void)setEnabled:(BOOL)enabled;
