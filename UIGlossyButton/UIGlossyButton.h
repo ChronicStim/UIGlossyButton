@@ -104,6 +104,7 @@ typedef enum _UIGlossyButtonExtraShadingType {
 
 +(UIGlossyButton *)cptDefaultNavBarGlossyButtonWithTitle:(NSString *)title withHighlight:(BOOL)highlight maximumButtonWidth:(CGFloat)maxWidth;
 +(UIGlossyButton *)cptDefaultNavBarGlossyButtonWithTitle:(NSString *)title withHighlight:(BOOL)highlight;
+-(void)applyCPTDefaultGlossyButtonFeaturesWithTitle:(NSString *)title withHighlight:(BOOL)highlight;
 -(void)applyCPTDefaultGlossyButtonFeaturesWithTitle:(NSString *)title tintColor:(UIColor *)aTintColor borderColor:(UIColor *)aBorderColor disabledColor:(UIColor *)aDisabledColor disabledBorderColor:(UIColor *)aDisabledBorderColor;
 +(UIGlossyButton *)glossyButtonWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents maximumButtonWidth:(CGFloat)maxWidth;
 +(UIGlossyButton *)glossyButtonWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents;

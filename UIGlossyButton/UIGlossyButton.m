@@ -551,6 +551,41 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     return [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:title withHighlight:highlight maximumButtonWidth:0.0f];
 }
 
+-(void)applyCPTDefaultGlossyButtonFeaturesWithTitle:(NSString *)title withHighlight:(BOOL)highlight;
+{
+    if (highlight) {
+        self.tintColor = [UIColor cptPrimaryColorSelected];
+        self.borderColor = [UIColor cptPrimaryColorSelected];
+    } else {
+        self.tintColor = [UIColor cptPrimaryColor];
+        self.borderColor = [UIColor cptPrimaryColor];
+    }
+    self.tag = 0;
+	[self useWhiteLabel: YES];
+	self.backgroundOpacity = 1.0;
+	self.innerBorderWidth = 0.0f;
+	self.buttonBorderWidth = 2.0f;
+	self.buttonCornerRadius = 6.0f;
+	self.strokeType = kUIGlossyButtonStrokeTypeBevelUp;
+	[self setGradientType: kUIGlossyButtonGradientTypeLinearGlossyStandard];
+	[self setExtraShadingType:kUIGlossyButtonExtraShadingTypeRounded];
+    [self.titleLabel setAdjustsFontSizeToFitWidth:YES];
+    [self.titleLabel setMinimumScaleFactor:0.1];
+    UIFont *font = [UIFont fontWithName:@"Arial-BoldMT" size:15.0f];
+    [self.titleLabel setFont:font];
+    
+    if (highlight) {
+        [self.titleLabel setShadowColor:[UIColor blackColor]];
+        [self.titleLabel setShadowOffset:CGSizeMake(1.0f, 1.0f)];
+    }
+    self.disabledBorderColor = [UIColor grayColor];
+    self.disabledColor = [UIColor grayColor];
+    
+    [self setTitle:title forState:UIControlStateNormal];
+    
+    [self setPlaySoundWhenPressed:YES];
+}
+
 -(void)applyCPTDefaultGlossyButtonFeaturesWithTitle:(NSString *)title tintColor:(UIColor *)aTintColor borderColor:(UIColor *)aBorderColor disabledColor:(UIColor *)aDisabledColor disabledBorderColor:(UIColor *)aDisabledBorderColor;
 {
     UIFont *font = [UIFont fontWithName:@"Arial-BoldMT" size:15.0f];
