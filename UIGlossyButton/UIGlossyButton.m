@@ -500,7 +500,8 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         CGFloat trialWidth;
         do {
             font = [UIFont fontWithName:@"Arial-BoldMT" size:fontSize];
-            CGSize trialSize = [title sizeWithFont:font];
+            NSDictionary* attributes = @{NSFontAttributeName: font};
+            CGSize trialSize = [title sizeWithAttributes:attributes];
             trialWidth = trialSize.width + 14.0f;
             fontSize -= 1.0f;
         } while (trialWidth > maxWidth);
@@ -508,7 +509,8 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         font = [UIFont fontWithName:@"Arial-BoldMT" size:fontSize];
     }
     
-    CGSize labelSize = [title sizeWithFont:font];
+    NSDictionary* attributes = @{NSFontAttributeName: font};
+    CGSize labelSize = [title sizeWithAttributes:attributes];
     labelSize.width += 14.0f;
     
     UIGlossyButton *newButton = [[UIGlossyButton alloc] initWithFrame:CGRectMake(0, 8, roundf(labelSize.width), 28)];
