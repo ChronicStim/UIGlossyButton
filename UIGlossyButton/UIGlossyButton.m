@@ -609,6 +609,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 	[self setGradientType: kUIGlossyButtonGradientTypeSolid];
 	[self setExtraShadingType:kUIGlossyButtonExtraShadingTypeRounded];
     [self setTitle:title forState:UIControlStateNormal];
+    [self setNeedsDisplay];
 }
 
 +(UIGlossyButton *)glossyButtonWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents maximumButtonWidth:(CGFloat)maxWidth;
