@@ -612,6 +612,31 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     [self setNeedsDisplay];
 }
 
+-(void)replaceExistingImageWith:(UIImage *)newImage animate:(BOOL)animate duration:(NSTimeInterval)duration;
+{
+    if (![[NSThread mainThread] isEqual:[NSThread currentThread]]) {
+        __weak __typeof__(self) weakSelf = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [weakSelf replaceExistingImageWith:newImage animate:animate duration:duration];
+        });
+    }
+    
+    // This method will only replace an image if the GlossyButton already contains an existing imageView, so it must have initially been created with it.
+    if ([self subViewExistsWithTag:778]) {
+        if (animate) {
+            __weak __typeof__(self) weakSelf = self;
+            [UIImageView animateWithDuration:duration animations:^{
+                UIImageView *existingImageView = (UIImageView *)[weakSelf viewWithTag:778];
+                [existingImageView setImage:newImage];
+            }];
+        } else {
+            UIImageView *existingImageView = (UIImageView *)[self viewWithTag:778];
+            [existingImageView setImage:newImage];
+        }
+    }
+}
+
 +(UIGlossyButton *)glossyButtonWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents maximumButtonWidth:(CGFloat)maxWidth;
 {
     UIGlossyButton *glossyButton;
