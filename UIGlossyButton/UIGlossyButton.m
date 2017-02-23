@@ -838,7 +838,11 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     [glossyButton setCenter:containerView.center];
     
 //   //DDLogVerbose(@"GlossyButton container view frame = %@",NSStringFromCGRect(containerView.frame));
-    return [[UIGlossyBarButtonItem alloc] initWithCustomView:containerView];
+    
+    UIGlossyBarButtonItem *barButtonItem = [[UIGlossyBarButtonItem alloc] initWithCustomView:containerView];
+    barButtonItem.uiGlossyButton = glossyButton;
+    
+    return barButtonItem;
 }
 
 +(UIGlossyBarButtonItem *)glossyBarButtonItemWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents;

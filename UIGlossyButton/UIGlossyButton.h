@@ -137,6 +137,9 @@ typedef enum _UIGlossyButtonExtraShadingType {
 @interface UIGlossyBarButtonItem : UIBarButtonItem {
     
 }
+
+@property (nonatomic, strong) UIGlossyButton *uiGlossyButton;
+
 +(UIGlossyBarButtonItem *)glossyBarButtonItemWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents maximumButtonWidth:(CGFloat)maxWidth;
 +(UIGlossyBarButtonItem *)glossyBarButtonItemWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents;
 
