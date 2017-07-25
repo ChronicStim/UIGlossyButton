@@ -590,6 +590,11 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 
 -(void)applyCPTDefaultGlossyButtonFeaturesWithTitle:(NSString *)title tintColor:(UIColor *)aTintColor borderColor:(UIColor *)aBorderColor disabledColor:(UIColor *)aDisabledColor disabledBorderColor:(UIColor *)aDisabledBorderColor;
 {
+    [self applyCPTDefaultGlossyButtonFeaturesWithTitle:title tintColor:aTintColor borderColor:aBorderColor disabledTitle:nil disabledColor:aDisabledColor disabledBorderColor:aDisabledBorderColor];
+}
+
+-(void)applyCPTDefaultGlossyButtonFeaturesWithTitle:(NSString *)title tintColor:(UIColor *)aTintColor borderColor:(UIColor *)aBorderColor disabledTitle:(NSString *)disabledTitle disabledColor:(UIColor *)aDisabledColor disabledBorderColor:(UIColor *)aDisabledBorderColor;
+{
     UIFont *font = [UIFont fontWithName:@"Arial-BoldMT" size:15.0f];
     
     self.titleLabel.font = font;
@@ -597,18 +602,23 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     self.titleLabel.text = title;
     [self.titleLabel setAdjustsFontSizeToFitWidth:YES];
     [self.titleLabel setMinimumScaleFactor:0.4];
-	[self useWhiteLabel: YES];
-	self.backgroundOpacity = 1.0;
-	self.innerBorderWidth = 0.0f;
-	self.buttonBorderWidth = 3.0f;
-	self.buttonCornerRadius = 8.0f;
+    [self useWhiteLabel: YES];
+    self.backgroundOpacity = 1.0;
+    self.innerBorderWidth = 0.0f;
+    self.buttonBorderWidth = 3.0f;
+    self.buttonCornerRadius = 8.0f;
     self.borderColor = aBorderColor;
     self.disabledColor = aDisabledColor;
     self.disabledBorderColor = aDisabledBorderColor;
-	self.strokeType = kUIGlossyButtonStrokeTypeGradientFrame;
-	[self setGradientType: kUIGlossyButtonGradientTypeSolid];
-	[self setExtraShadingType:kUIGlossyButtonExtraShadingTypeRounded];
+    self.strokeType = kUIGlossyButtonStrokeTypeGradientFrame;
+    [self setGradientType: kUIGlossyButtonGradientTypeSolid];
+    [self setExtraShadingType:kUIGlossyButtonExtraShadingTypeRounded];
     [self setTitle:title forState:UIControlStateNormal];
+
+    if (nil != disabledTitle) {
+        [self setTitle:disabledTitle forState:UIControlStateDisabled];
+    }
+    
     [self setNeedsDisplay];
 }
 
