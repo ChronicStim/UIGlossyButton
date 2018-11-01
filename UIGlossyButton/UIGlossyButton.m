@@ -586,6 +586,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     [self setTitle:title forState:UIControlStateNormal];
     
     [self setPlaySoundWhenPressed:YES];
+    [self setNeedsDisplay];
 }
 
 -(void)applyCPTDefaultGlossyButtonFeaturesWithTitle:(NSString *)title tintColor:(UIColor *)aTintColor borderColor:(UIColor *)aBorderColor disabledColor:(UIColor *)aDisabledColor disabledBorderColor:(UIColor *)aDisabledBorderColor;
