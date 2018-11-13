@@ -10,6 +10,8 @@
 #import "UIGlossyButton.h"
 #import "CPTSoundEngine.h"
 
+#define kUIGlossyBarButtonItemImagePlaceHolderFileName @"UIGlossyBarButtonItemImagePlaceHolder"
+
 static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     if ([[UIView class] instancesRespondToSelector:@selector(contentScaleFactor)]) {
 		UIGraphicsBeginImageContextWithOptions(size, NO, 0.0);
@@ -653,6 +655,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     UIGlossyButton *glossyButton;
     CGFloat finalButtonHeight = 38.0f;
     if (nil != title && nil == image) {
+        // Title: YES;  Image: NO;
         glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:title withHighlight:highlighted maximumButtonWidth:maxWidth];
         [glossyButton setTag:777];
         [glossyButton addTarget:target action:selector forControlEvents:controlEvents];
@@ -661,7 +664,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         [glossyButton setFrame:finalRect];
         
     } else if (nil != image && nil == title) {
-        
+        // Title: NO;  Image: YES;
         CGFloat finalImageHeight = 30.0f;
         CGFloat extraImageWidthSpacing = 10.0f;
         CGFloat scale = finalImageHeight / image.size.height;
@@ -684,7 +687,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         [imageView setAutoresizingMask:(UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth)];
         
     } else if (nil != image && nil != title) {
-        
+        // Title: YES;  Image: YES;
         // Button with image to left of text
         
         // Determine rect required for the image
@@ -735,6 +738,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         [glossyButton addSubview:titleLabel];
         
     } else {
+        // Title: NO;  Image: NO;
         // Ooops. Should have caught in prior statements, but if you go here, return a blank button so something can be shown
         glossyButton = [UIGlossyButton cptDefaultNavBarGlossyButtonWithTitle:@"" withHighlight:highlighted maximumButtonWidth:maxWidth];
         [glossyButton setTag:777];
@@ -836,6 +840,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 @end
 
 @implementation UIGlossyBarButtonItem
+@synthesize uiGlossyButton = _uiGlossyButton;
 
 +(UIGlossyBarButtonItem *)glossyBarButtonItemWithTitle:(NSString *)title image:(UIImage *)image highlighted:(BOOL)highlighted forTarget:(id)target selector:(SEL)selector forControlEvents:(UIControlEvents)controlEvents maximumButtonWidth:(CGFloat)maxWidth;
 {
@@ -863,11 +868,77 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
     return barButtonItem;
 }
 
+-(instancetype)initWithCoder:(NSCoder *)aDecoder;
+{
+    NSString *title = @"";
+    UIImage *image = [UIImage imageFromDiskNamed:kUIGlossyBarButtonItemImagePlaceHolderFileName];
+    UIGlossyButton *glossyButton = [UIGlossyButton glossyButtonWithTitle:title image:image highlighted:NO forTarget:self selector:@selector(description) forControlEvents:UIControlEventTouchUpInside maximumButtonWidth:0.0f];
+    
+    CGFloat finalButtonHeight = 34.0f;
+    CGRect buttonRect = CGRectMake(0, 0, (glossyButton.frame.size.width + 0.0f), finalButtonHeight);
+    UIView *customView = [[UIView alloc] initWithFrame:buttonRect];
+
+    if ((self = [super initWithCustomView:customView])) {
+
+        customView.backgroundColor = [UIColor clearColor];
+        [[customView subviews] bk_apply:^(id obj) {
+            [(UIView *)obj removeFromSuperview]; // Remove each existing subview
+        }];
+        
+        _uiGlossyButton = glossyButton; // Assign to the ivar/property
+        
+        [customView addSubview:_uiGlossyButton]; // Add to the customView as a subview
+    }
+    return self;
+}
+
+-(instancetype)initWithFrame:(CGRect)frame;
+{
+    UIView *customView = [[UIView alloc] initWithFrame:frame];
+
+    if ((self = [super initWithCustomView:customView])) {
+
+        NSString *title = @"";
+        UIImage *image = [UIImage imageFromDiskNamed:kUIGlossyBarButtonItemImagePlaceHolderFileName];
+        UIGlossyButton *glossyButton = [UIGlossyButton glossyButtonWithTitle:title image:image highlighted:NO forTarget:self selector:@selector(description) forControlEvents:UIControlEventTouchUpInside maximumButtonWidth:0.0f];
+        
+        customView.backgroundColor = [UIColor clearColor];
+        [[customView subviews] bk_apply:^(id obj) {
+            [(UIView *)obj removeFromSuperview]; // Remove each existing subview
+        }];
+        
+        _uiGlossyButton = glossyButton; // Assign to the ivar/property
+        
+        [customView addSubview:_uiGlossyButton]; // Add to the customView as a subview
+    }
+    return self;
+}
+
+-(instancetype)initWithCustomView:(UIView *)customView;
+{
+    if ((self = [super initWithCustomView:customView])) {
+        
+        NSString *title = @"";
+        UIImage *image = [UIImage imageFromDiskNamed:kUIGlossyBarButtonItemImagePlaceHolderFileName];
+        UIGlossyButton *glossyButton = [UIGlossyButton glossyButtonWithTitle:title image:image highlighted:NO forTarget:self selector:@selector(description) forControlEvents:UIControlEventTouchUpInside maximumButtonWidth:0.0f];
+        
+        customView.backgroundColor = [UIColor clearColor];
+        [[customView subviews] bk_apply:^(id obj) {
+            [(UIView *)obj removeFromSuperview]; // Remove each existing subview
+        }];
+
+        _uiGlossyButton = glossyButton; // Assign to the ivar/property
+
+        [customView addSubview:_uiGlossyButton]; // Add to the customView as a subview
+    }
+    return self;
+}
+
 -(void)setEnabled:(BOOL)enabled;
 {
     [super setEnabled:enabled];
-    if (nil != [[self customView] viewWithTag:777]) {
-        [(UIGlossyButton *)[[self customView] viewWithTag:777] setEnabled:enabled];
+    if (nil != _uiGlossyButton) {
+        [self.uiGlossyButton setEnabled:enabled];
     }
     if (nil != [[self customView] viewWithTag:778]) {
         CGFloat alpha = 1.0f;
@@ -875,6 +946,35 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
             alpha = 0.5f;
         }
         [(UIImageView *)[[self customView] viewWithTag:778] setAlpha:alpha];
+    }
+}
+
+-(UIGlossyButton *)uiGlossyButton;
+{
+    if (nil != _uiGlossyButton) {
+        return _uiGlossyButton;
+    }
+    
+    NSAssert(nil != _uiGlossyButton,@"UIGlossyBarButtonItem must contain a UIGlossyButton in the customView");
+    return _uiGlossyButton;
+}
+
+-(void)setUiGlossyButton:(UIGlossyButton *)uiGlossyButton;
+{
+    if (![uiGlossyButton isEqual:_uiGlossyButton]) {
+        
+        if (nil != _uiGlossyButton) {
+            [_uiGlossyButton removeFromSuperview];
+        }
+        
+        _uiGlossyButton = uiGlossyButton;
+        
+        if (nil != _uiGlossyButton) {
+            _uiGlossyButton.tag = 777;
+            [self.customView addSubview:_uiGlossyButton];
+        }
+
+        [self.customView setNeedsDisplay];
     }
 }
 
