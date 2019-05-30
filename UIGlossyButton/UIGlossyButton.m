@@ -21,7 +21,19 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 	}
 }
 
+@implementation UIFont (UIGlossyButton)
 
++ (UIFont *) glossyButtonCondensedDemiFont;
+{
+    return [UIFont fontWithName:@"AvenirNextCondensed-DemiBold" size:17.0f];
+}
+
++ (UIFont *) glossyButtonBoldFont;
+{
+    return [UIFont fontWithName:@"Arial-BoldMT" size:17.0f];
+}
+
+@end
 
 @implementation UIButton(UIGlossyButton)
 
@@ -463,7 +475,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 - (void) setActionSheetButtonWithColor : (UIColor*) color {
 	self.tintColor = color;
 	[self setGradientType:kUIGlossyButtonGradientTypeLinearGlossyStandard];
-	[self.titleLabel setFont: [UIFont boldSystemFontOfSize: 17.0f]];
+	[self.titleLabel setFont: [[UIFont glossyButtonCondensedDemiFont] fontWithSize:17.0f]];
 	[self useWhiteLabel: NO];
 	self.buttonCornerRadius = 8.0f;
 	self.strokeType = kUIGlossyButtonStrokeTypeGradientFrame;
@@ -476,7 +488,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 	self.tintColor = color;
 	self.disabledBorderColor = [UIColor lightGrayColor];
 	[self setGradientType:kUIGlossyButtonGradientTypeLinearGlossyStandard];
-	[self.titleLabel setFont: [UIFont boldSystemFontOfSize: 12.0f]];
+	[self.titleLabel setFont: [[UIFont glossyButtonCondensedDemiFont] fontWithSize:12.0f]];
 	[self useWhiteLabel: NO];
 	[self setTitleColor:[UIColor colorWithWhite:0.5 alpha:1.0] forState:UIControlStateDisabled];
 	self.buttonCornerRadius = 4.0f;
@@ -489,26 +501,25 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 +(UIGlossyButton *)cptDefaultNavBarGlossyButtonWithTitle:(NSString *)title withHighlight:(BOOL)highlight maximumButtonWidth:(CGFloat)maxWidth;
 {
     // Define initial font size
-    CGFloat fontSize;
-    UIFont *font;
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        fontSize = 15.0f;
-    } else {
-        fontSize = 12.0f;
-    }
+    UIFont *font = [UIFont glossyButtonCondensedDemiFont];
+    CGFloat fontSize = font.pointSize;
     
     // If there is a min width, iterate down to fit it
     if (maxWidth > 0.0f) {
         CGFloat trialWidth;
+        CGFloat trialFontSize = fontSize;
+        UIFont *trialFont = [font fontWithSize:trialFontSize];
         do {
-            font = [UIFont fontWithName:@"Arial-BoldMT" size:fontSize];
-            NSDictionary* attributes = @{NSFontAttributeName: font};
+            font = [font fontWithSize:trialFontSize];
+            fontSize = trialFontSize;
+            NSDictionary* attributes = @{NSFontAttributeName: trialFont};
             CGSize trialSize = [title sizeWithAttributes:attributes];
             trialWidth = trialSize.width + 14.0f;
-            fontSize -= 1.0f;
+            trialFontSize -= 1.0f;
+            trialFont = [trialFont fontWithSize:trialFontSize];
         } while (trialWidth > maxWidth);
     } else {
-        font = [UIFont fontWithName:@"Arial-BoldMT" size:fontSize];
+        font = [UIFont glossyButtonCondensedDemiFont];
     }
     
     NSDictionary* attributes = @{NSFontAttributeName: font};
@@ -575,7 +586,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 	[self setExtraShadingType:kUIGlossyButtonExtraShadingTypeRounded];
     [self.titleLabel setAdjustsFontSizeToFitWidth:YES];
     [self.titleLabel setMinimumScaleFactor:0.1];
-    UIFont *font = [UIFont fontWithName:@"Arial-BoldMT" size:15.0f];
+    UIFont *font = [[UIFont glossyButtonCondensedDemiFont] fontWithSize:15.0f];
     [self.titleLabel setFont:font];
     
     if (highlight) {
@@ -598,7 +609,7 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
 
 -(void)applyCPTDefaultGlossyButtonFeaturesWithTitle:(NSString *)title tintColor:(UIColor *)aTintColor borderColor:(UIColor *)aBorderColor disabledTitle:(NSString *)disabledTitle disabledColor:(UIColor *)aDisabledColor disabledBorderColor:(UIColor *)aDisabledBorderColor;
 {
-    UIFont *font = [UIFont fontWithName:@"Arial-BoldMT" size:15.0f];
+    UIFont *font = [[UIFont glossyButtonCondensedDemiFont] fontWithSize:15.0f];
     
     self.titleLabel.font = font;
     self.tintColor = aTintColor;

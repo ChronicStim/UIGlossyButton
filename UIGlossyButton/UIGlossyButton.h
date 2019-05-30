@@ -16,6 +16,13 @@
 
 @end
 
+@interface UIFont (UIGlossyButton)
+
++ (UIFont *) glossyButtonCondensedDemiFont;
++ (UIFont *) glossyButtonBoldFont;
+
+@end
+
 @interface UIColor(UIGlossyButton)
 
 + (UIColor*) doneButtonColor;
