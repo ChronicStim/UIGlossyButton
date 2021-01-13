@@ -511,7 +511,6 @@ static void RetinaAwareUIGraphicsBeginImageContext(CGSize size) {
         UIFont *trialFont = [font fontWithSize:trialFontSize];
         do {
             font = [font fontWithSize:trialFontSize];
-            fontSize = trialFontSize;
             NSDictionary* attributes = @{NSFontAttributeName: trialFont};
             CGSize trialSize = [title sizeWithAttributes:attributes];
             trialWidth = trialSize.width + 14.0f;
